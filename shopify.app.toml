@@ -3,7 +3,7 @@
 client_id = "177dbf4f95fe4669162193a70899395e"
 name = "order-printer-pdf-csv"
 handle = "order-printer-pdf-csv"
-application_url = "https://your-ngrok-url.ngrok.io/"
+application_url = "https://letsprint.indigenservices.com"
 embedded = true
 
 [build]
@@ -25,7 +25,10 @@ uri = "/api/webhooks/app/uninstalled"
 scopes = "read_orders,read_customers,read_products,read_product_listings,read_inventory,read_locations,read_shipping,read_analytics,read_reports,write_files,read_content,write_content"
 
 [auth]
-redirect_urls = [ "https://your-ngrok-url.ngrok.io/api/auth" ]
+redirect_urls = [ 
+  "https://letsprint.indigenservices.com/api/auth",
+  "https://letsprint.indigenservices.com/api/auth/callback"
+]
 
 [pos]
 embedded = false

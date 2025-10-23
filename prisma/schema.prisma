@@ -1,0 +1,156 @@
+// Shopify Order Printer - Prisma Schema
+// Database schema for production deployment
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Sessions table for Shopify OAuth
+model Session {
+  id              String    @id @db.VarChar(255)
+  shop            String    @db.VarChar(255)
+  state           String?   @db.VarChar(255)
+  isOnline        Boolean   @default(false)
+  scope           String?   @db.VarChar(1000)
+  expires         DateTime? @db.Timestamp
+  accessToken     String?   @db.VarChar(255)
+  userId          String?   @db.VarChar(255)
+  firstName       String?   @db.VarChar(255)
+  lastName        String?   @db.VarChar(255)
+  email           String?   @db.VarChar(255)
+  accountOwner    Boolean   @default(false)
+  locale          String?   @db.VarChar(10)
+  collaborator    Boolean   @default(false)
+  emailVerified   Boolean   @default(false)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamp
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp
+
+  @@index([shop], name: "idx_sessions_shop")
+  @@index([expires], name: "idx_sessions_expires")
+  @@map("sessions")
+}
+
+// App settings per shop
+model AppSettings {
+  id                    Int       @id @default(autoincrement())
+  shop                  String    @unique @db.VarChar(255)
+  storeState            String    @default("Gujarat") @map("store_state") @db.VarChar(100)
+  gstin                 String?   @db.VarChar(15)
+  businessName          String?   @map("business_name") @db.VarChar(255)
+  businessAddress       String?   @map("business_address") @db.Text
+  businessPhone         String?   @map("business_phone") @db.VarChar(20)
+  businessEmail         String?   @map("business_email") @db.VarChar(255)
+  gstRateBelow1000      Decimal   @default(0.050) @map("gst_rate_below_1000") @db.Decimal(4, 3)
+  gstRateAbove1000      Decimal   @default(0.120) @map("gst_rate_above_1000") @db.Decimal(4, 3)
+  defaultTemplateId     String?   @map("default_template_id") @db.VarChar(255)
+  settingsJson          Json?     @map("settings_json") @db.Json
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamp
+  updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp
+
+  @@map("app_settings")
+}
+
+// PDF/CSV templates
+model Template {
+  id              String    @id @db.VarChar(255)
+  shop            String    @db.VarChar(255)
+  name            String    @db.VarChar(255)
+  isDefault       Boolean   @default(false) @map("is_default")
+  layoutConfig    Json?     @map("layout_config") @db.Json
+  businessInfo    Json?     @map("business_info") @db.Json
+  stylingConfig   Json?     @map("styling_config") @db.Json
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamp
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamp
+
+  @@index([shop], name: "idx_templates_shop")
+  @@index([shop, isDefault], name: "idx_templates_default")
+  @@map("templates")
+}
+
+// Print/export jobs tracking
+model PrintJob {
+  id                  String        @id @db.VarChar(255)
+  shop                String        @db.VarChar(255)
+  jobType             JobType       @map("job_type")
+  status              JobStatus     @default(PENDING)
+  orderIds            Json?         @map("order_ids") @db.Json
+  dateRangeStart      DateTime?     @map("date_range_start") @db.Date
+  dateRangeEnd        DateTime?     @map("date_range_end") @db.Date
+  filePath            String?       @map("file_path") @db.VarChar(500)
+  fileSize            BigInt?       @map("file_size")
+  errorMessage        String?       @map("error_message") @db.Text
+  progressPercentage  Int           @default(0) @map("progress_percentage")
+  createdAt           DateTime      @default(now()) @map("created_at") @db.Timestamp
+  updatedAt           DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamp
+  completedAt         DateTime?     @map("completed_at") @db.Timestamp
+
+  @@index([shop], name: "idx_print_jobs_shop")
+  @@index([status], name: "idx_print_jobs_status")
+  @@index([createdAt], name: "idx_print_jobs_created")
+  @@map("print_jobs")
+}
+
+// Webhook delivery logs
+model WebhookLog {
+  id                Int               @id @default(autoincrement())
+  shop              String            @db.VarChar(255)
+  topic             String            @db.VarChar(100)
+  webhookId         String?           @map("webhook_id") @db.VarChar(255)
+  payload           Json?             @db.Json
+  headers           Json?             @db.Json
+  status            WebhookStatus     @default(RECEIVED)
+  errorMessage      String?           @map("error_message") @db.Text
+  processingTimeMs  Int?              @map("processing_time_ms")
+  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamp
+  processedAt       DateTime?         @map("processed_at") @db.Timestamp
+
+  @@index([shop], name: "idx_webhook_logs_shop")
+  @@index([topic], name: "idx_webhook_logs_topic")
+  @@index([status], name: "idx_webhook_logs_status")
+  @@index([createdAt], name: "idx_webhook_logs_created")
+  @@map("webhook_logs")
+}
+
+// App installations tracking
+model AppInstallation {
+  id                Int       @id @default(autoincrement())
+  shop              String    @unique @db.VarChar(255)
+  installedAt       DateTime  @default(now()) @map("installed_at") @db.Timestamp
+  uninstalledAt     DateTime? @map("uninstalled_at") @db.Timestamp
+  installationData  Json?     @map("installation_data") @db.Json
+  isActive          Boolean   @default(true) @map("is_active")
+
+  @@index([shop], name: "idx_installations_shop")
+  @@index([isActive], name: "idx_installations_active")
+  @@map("app_installations")
+}
+
+// Enums
+enum JobType {
+  PDF
+  CSV
+
+  @@map("job_type")
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+
+  @@map("job_status")
+}
+
+enum WebhookStatus {
+  RECEIVED
+  PROCESSED
+  FAILED
+
+  @@map("webhook_status")
+}
