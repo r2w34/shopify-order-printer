@@ -13,10 +13,6 @@ include_config_on_deploy = true
 api_version = "2026-01"
 
   [[webhooks.subscriptions]]
-  topics = [ "orders/create", "orders/updated", "orders/paid" ]
-  uri = "https://letsprint.indigenservices.com/api/webhooks/orders"
-
-  [[webhooks.subscriptions]]
   topics = [ "app/uninstalled" ]
   uri = "https://letsprint.indigenservices.com/api/webhooks/app/uninstalled"
 
