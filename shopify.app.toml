@@ -1,33 +1,41 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "177dbf4f95fe4669162193a70899395e"
-name = "order-printer-pdf-csv"
-handle = "order-printer-pdf-csv"
+client_id = "5a5fa193e345adea3497281c7f8d7c5f"
+name = "LetsPrint"
 application_url = "https://letsprint.indigenservices.com"
 embedded = true
 
 [build]
+automatically_update_urls_on_dev = true
 include_config_on_deploy = true
 
 [webhooks]
-api_version = "2025-07"
+api_version = "2026-01"
 
-[[webhooks.subscriptions]]
-topics = [ "orders/create", "orders/updated", "orders/paid" ]
-uri = "/api/webhooks/orders"
+  [[webhooks.subscriptions]]
+  topics = [ "orders/create", "orders/updated", "orders/paid" ]
+  uri = "https://letsprint.indigenservices.com/api/webhooks/orders"
 
-[[webhooks.subscriptions]]
-topics = [ "app/uninstalled" ]
-uri = "/api/webhooks/app/uninstalled"
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "https://letsprint.indigenservices.com/api/webhooks/app/uninstalled"
+
+  [[webhooks.subscriptions]]
+  uri = "https://letsprint.indigenservices.com/api/webhooks/gdpr"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
 
 [access_scopes]
 # Scopes required for Indian T-shirt store order management and GST compliance
-scopes = "read_orders,read_customers,read_products,read_product_listings,read_inventory,read_locations,read_shipping,read_analytics,read_reports,write_files,read_content,write_content"
+scopes = "read_analytics,read_content,read_customers,read_inventory,read_locations,read_orders,read_product_listings,read_products,read_reports,read_shipping,write_content,write_files"
+optional_scopes = []
+use_legacy_install_flow = false
 
 [auth]
-redirect_urls = [ 
+redirect_urls = [
   "https://letsprint.indigenservices.com/api/auth",
-  "https://letsprint.indigenservices.com/api/auth/callback"
+  "https://letsprint.indigenservices.com/api/auth/callback",
+  "https://letsprint.indigenservices.com/auth/callback",
+  "https://letsprint.indigenservices.com/auth/shopify/callback"
 ]
 
 [pos]
