@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { TestPolaris } from '@/components/TestPolaris'
-import { Page, Banner, Layout } from '@shopify/polaris'
+import { Page, Layout } from '@shopify/polaris'
 import { AppErrorBoundary } from '@/lib/error-handling/AppErrorHandler'
 import { ExitIframe } from '@/components/ExitIframe'
 
@@ -94,12 +94,10 @@ export default function ClientHomePage() {
         <Page title="Order Printer - GST Compliant">
           <Layout>
             <Layout.Section>
-              <Banner
-                title="Welcome to LetsPrint!"
-                tone="success"
-              >
-                <p>Your GST-compliant order printing solution for Indian stores.</p>
-              </Banner>
+              <div className="p-4 bg-green-50 border border-green-200 rounded-md">
+                <h2 className="text-lg font-semibold text-green-800 mb-2">Welcome to LetsPrint!</h2>
+                <p className="text-green-700">Your GST-compliant order printing solution for Indian stores.</p>
+              </div>
             </Layout.Section>
             <Layout.Section>
               <TestPolaris />

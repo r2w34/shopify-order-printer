@@ -1,7 +1,7 @@
 'use client'
 
 import { ReactNode, useEffect, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { Provider as AppBridgeReactProvider } from '@shopify/app-bridge-react'
 
 interface AppBridgeProviderProps {
@@ -10,35 +10,37 @@ interface AppBridgeProviderProps {
 
 export function AppBridgeProvider({ children }: AppBridgeProviderProps) {
   const searchParams = useSearchParams()
-  const router = useRouter()
-  const [config, setConfig] = useState<any>(null)
+  const [config, setConfig] = useState<{apiKey: string, host: string, forceRedirect: boolean} | null>(null)
 
   useEffect(() => {
     const shop = searchParams.get('shop')
     const host = searchParams.get('host')
     
+    const apiKey = process.env.NEXT_PUBLIC_SHOPIFY_API_KEY
+    
+    if (!apiKey) {
+      console.error('NEXT_PUBLIC_SHOPIFY_API_KEY is not defined')
+      return
+    }
+    
     // If we have shop parameter, we're in Shopify context
-    if (shop) {
-      const appBridgeConfig = {
-        apiKey: process.env.NEXT_PUBLIC_SHOPIFY_API_KEY!,
-        host: host || btoa(`${shop}/admin`),
-        forceRedirect: true,
-      }
-      
-      setConfig(appBridgeConfig)
-    } else {
-      // Not in Shopify context - check if we're on a route that needs auth
-      const isAuthRoute = window.location.pathname.startsWith('/api/auth')
-      const isWebhookRoute = window.location.pathname.startsWith('/api/webhooks')
-      
-      if (!isAuthRoute && !isWebhookRoute) {
-        // Show a message asking to install the app
-        console.log('No shop parameter - app needs to be accessed from Shopify admin')
-      }
-      
-      // Set a dummy config to allow the app to render
+    if (shop && host) {
       setConfig({
-        apiKey: process.env.NEXT_PUBLIC_SHOPIFY_API_KEY!,
+        apiKey,
+        host,
+        forceRedirect: true,
+      })
+    } else if (shop) {
+      // Shop but no host - create a host parameter
+      setConfig({
+        apiKey,
+        host: btoa(`${shop}/admin`),
+        forceRedirect: true,
+      })
+    } else {
+      // Not in Shopify context - set a dummy config to allow rendering
+      setConfig({
+        apiKey,
         host: btoa('example.myshopify.com/admin'),
         forceRedirect: false,
       })
