@@ -1,38 +1,34 @@
-# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+# LetsPrint - Order Printer with GST Compliance for Indian Stores
+# Learn more: https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "5a5fa193e345adea3497281c7f8d7c5f"
 name = "LetsPrint"
 application_url = "https://letsprint.indigenservices.com"
 embedded = true
 
-[build]
-automatically_update_urls_on_dev = true
-include_config_on_deploy = true
+# Scopes required for Indian T-shirt store order management and GST compliance
+scopes = "read_analytics,read_content,read_customers,read_inventory,read_locations,read_orders,read_product_listings,read_products,read_reports,read_shipping,write_content,write_files"
 
 [webhooks]
 api_version = "2026-01"
 
+  # App lifecycle webhooks
   [[webhooks.subscriptions]]
-  topics = [ "app/uninstalled" ]
-  uri = "https://letsprint.indigenservices.com/api/webhooks/app/uninstalled"
+  uri = "/webhooks/app/uninstalled"
+  topics = ["app/uninstalled"]
 
+  # GDPR compliance webhooks (mandatory for public apps)
   [[webhooks.subscriptions]]
-  uri = "https://letsprint.indigenservices.com/api/webhooks/gdpr"
-  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
-
-[access_scopes]
-# Scopes required for Indian T-shirt store order management and GST compliance
-scopes = "read_analytics,read_content,read_customers,read_inventory,read_locations,read_orders,read_product_listings,read_products,read_reports,read_shipping,write_content,write_files"
-optional_scopes = []
-use_legacy_install_flow = false
+  uri = "/webhooks/gdpr"
+  compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
 
 [auth]
 redirect_urls = [
-  "https://letsprint.indigenservices.com/api/auth",
-  "https://letsprint.indigenservices.com/api/auth/callback",
   "https://letsprint.indigenservices.com/auth/callback",
-  "https://letsprint.indigenservices.com/auth/shopify/callback"
+  "https://letsprint.indigenservices.com/auth/shopify/callback",
+  "https://letsprint.indigenservices.com/api/auth/callback"
 ]
 
-[pos]
-embedded = false
+[build]
+automatically_update_urls_on_dev = true
+include_config_on_deploy = true

@@ -1,69 +1,80 @@
 {
-  "name": "order-printer-pdf-csv",
+  "name": "letsprint-order-printer",
   "version": "1.0.0",
+  "description": "GST-compliant order printer for Indian Shopify stores",
   "private": true,
-  "license": "UNLICENSED",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "type-check": "tsc --noEmit",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:ui": "vitest --ui",
+    "build": "remix vite:build",
+    "dev": "shopify app dev",
+    "config:link": "shopify app config link",
+    "generate": "shopify app generate",
+    "deploy": "shopify app deploy",
+    "config:use": "shopify app config use",
+    "env": "shopify app env",
+    "start": "remix-serve ./build/server/index.js",
+    "docker-start": "npm run setup && npm run start",
+    "setup": "prisma generate && prisma migrate deploy",
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "shopify": "shopify",
-    "shopify:build": "shopify app build",
-    "shopify:dev": "shopify app dev",
-    "shopify:info": "shopify app info",
-    "shopify:generate": "shopify app generate",
-    "shopify:deploy": "shopify app deploy",
-    "deploy:production": "./scripts/deploy-production.sh",
-    "deploy:vercel": "vercel --prod",
-    "deploy:railway": "railway up",
-    "setup:local": "./scripts/setup-local-dev.sh",
-    "setup:ssl": "./scripts/setup-ssl.sh",
-    "setup:db": "node -e \"console.log('Run the SQL script in scripts/setup-production-db.sql on your production database')\"",
-    "docker:build": "docker build -t shopify-order-printer .",
-    "docker:run": "docker-compose -f docker-compose.production.yml up -d",
-    "docker:stop": "docker-compose -f docker-compose.production.yml down",
-    "health:check": "curl -f http://localhost:3000/api/webhooks/health?type=system || echo 'Health check failed'",
-    "logs:production": "docker-compose -f docker-compose.production.yml logs -f app"
+    "prisma": "prisma",
+    "graphql-codegen": "graphql-codegen",
+    "vite": "vite"
+  },
+  "type": "module",
+  "engines": {
+    "node": "^18.20 || ^20.10 || >=21.0.0"
   },
   "dependencies": {
-    "@prisma/client": "^6.18.0",
-    "@shopify/app-bridge": "^3.7.7",
-    "@shopify/app-bridge-react": "^4.1.3",
+    "@prisma/client": "^6.2.1",
+    "@remix-run/dev": "^2.16.1",
+    "@remix-run/fs-routes": "^2.16.1",
+    "@remix-run/node": "^2.16.1",
+    "@remix-run/react": "^2.16.1",
+    "@remix-run/serve": "^2.16.1",
+    "@shopify/app-bridge-react": "^4.1.6",
     "@shopify/polaris": "^12.0.0",
-    "@shopify/shopify-api": "^8.0.0",
-    "@tanstack/react-query": "^5.0.0",
-    "csv-writer": "^1.6.0",
-    "dotenv": "^17.2.3",
-    "graphql": "^16.11.0",
-    "graphql-request": "^7.2.0",
-    "next": "^14.0.0",
-    "prisma": "^6.18.0",
-    "puppeteer": "^24.16.2",
+    "@shopify/shopify-app-remix": "^3.7.0",
+    "@shopify/shopify-app-session-storage-prisma": "^6.0.0",
+    "isbot": "^5.1.0",
+    "prisma": "^6.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "zod": "^4.0.17"
+    "vite-tsconfig-paths": "^5.0.1"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@vitest/ui": "^3.2.4",
-    "autoprefixer": "^10.4.0",
-    "eslint": "^8.0.0",
-    "eslint-config-next": "^14.0.0",
-    "postcss": "^8.4.0",
-    "postcss-preset-env": "^10.2.4",
-    "tailwindcss": "^3.3.0",
-    "typescript": "^5.0.0",
-    "vitest": "^3.2.4"
+    "@remix-run/eslint-config": "^2.16.1",
+    "@remix-run/route-config": "^2.16.1",
+    "@shopify/api-codegen-preset": "^1.1.1",
+    "@types/eslint": "^9.6.1",
+    "@types/node": "^22.2.0",
+    "@types/react": "^18.2.31",
+    "@types/react-dom": "^18.2.14",
+    "eslint": "^8.42.0",
+    "eslint-config-prettier": "^10.0.1",
+    "prettier": "^3.2.4",
+    "typescript": "^5.2.2",
+    "vite": "^6.2.2"
   },
-  "author": "devengoratela",
-  "workspaces": [
-    "extensions/*"
-  ]
+  "workspaces": {
+    "packages": [
+      "extensions/*"
+    ]
+  },
+  "trustedDependencies": [
+    "@shopify/plugin-cloudflare"
+  ],
+  "resolutions": {
+    "@graphql-tools/url-loader": "8.0.16",
+    "@graphql-codegen/client-preset": "4.7.0",
+    "@graphql-codegen/typescript-operations": "4.5.0",
+    "minimatch": "9.0.5",
+    "vite": "^6.2.2"
+  },
+  "overrides": {
+    "@graphql-tools/url-loader": "8.0.16",
+    "@graphql-codegen/client-preset": "4.7.0",
+    "@graphql-codegen/typescript-operations": "4.5.0",
+    "minimatch": "9.0.5",
+    "vite": "^6.2.2"
+  }
 }
