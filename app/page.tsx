@@ -16,6 +16,8 @@ const ClientHomePage = dynamic(
   }
 )
 
+export const dynamic = 'force-dynamic'
+
 export default function HomePage() {
   return <ClientHomePage />
 }

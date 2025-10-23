@@ -19,14 +19,8 @@ export function middleware(request: NextRequest) {
   const shop = request.nextUrl.searchParams.get('shop')
   const host = request.nextUrl.searchParams.get('host')
 
-  // For embedded app, ensure we have shop parameter
-  if (!shop && pathname !== '/') {
-    // Redirect to auth with current URL as return path
-    const authUrl = new URL('/api/auth', request.url)
-    const returnUrl = encodeURIComponent(request.url)
-    authUrl.searchParams.set('return_to', returnUrl)
-    return NextResponse.redirect(authUrl)
-  }
+  // Allow requests without shop parameter to pass through
+  // The AppBridgeProvider will handle the logic client-side
 
   // Create response with security headers for embedded app
   const response = NextResponse.next()
