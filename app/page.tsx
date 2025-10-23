@@ -1,7 +1,7 @@
-import dynamic from 'next/dynamic'
+import dynamicImport from 'next/dynamic'
 
 // Dynamically import the client component to prevent SSR issues with Polaris
-const ClientHomePage = dynamic(
+const ClientHomePage = dynamicImport(
   () => import('@/components/ClientHomePage'),
   { 
     ssr: false,
